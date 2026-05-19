@@ -1,0 +1,55 @@
+.chapter-intro {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.chapter-intro__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: min(90vw, 52rem);
+  text-align: center;
+}
+
+.chapter-intro__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+.chapter-intro__cursor {
+  display: inline-block;
+  margin-left: 0.05em;
+  color: rgba(255, 255, 255, 0.85);
+  animation: chapter-intro-blink 0.9s step-end infinite;
+}
+
+.chapter-intro__rule {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.55);
+  transform-origin: center;
+}
+
+@keyframes chapter-intro-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}

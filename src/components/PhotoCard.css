@@ -1,0 +1,130 @@
+.photo-card {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #fff0f5, #ffe4ec);
+  overflow: hidden;
+}
+
+.photo-card--auto {
+  background: linear-gradient(135deg, #fff5f0, #ffe8e0);
+}
+
+.photo-card-auto {
+  min-height: 100svh;
+}
+
+.photo-card__layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+}
+
+.photo-card__layout--reverse .photo-card__media {
+  order: 2;
+}
+
+.photo-card__layout--reverse .photo-card__text-panel {
+  order: 1;
+}
+
+.photo-card__media,
+.photo-card__text-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+}
+
+.photo-card__media {
+  padding-left: 2.5rem;
+  padding-right: 1.25rem;
+}
+
+.photo-card__layout--reverse .photo-card__media {
+  padding-left: 1.25rem;
+  padding-right: 2.5rem;
+}
+
+.photo-card__frame {
+  max-width: min(100%, 22rem);
+  width: 100%;
+  padding: 0.65rem;
+  background: var(--color-cream);
+  border: 6px solid var(--color-pink);
+  box-shadow:
+    0 12px 32px rgba(26, 5, 16, 0.18),
+    0 4px 12px rgba(224, 83, 106, 0.12);
+}
+
+.photo-card__frame--tilt-left {
+  transform: rotate(-1deg);
+}
+
+.photo-card__frame--tilt-right {
+  transform: rotate(1deg);
+}
+
+.photo-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.photo-card__text-panel {
+  padding-left: 1.25rem;
+  padding-right: 2.5rem;
+}
+
+.photo-card__layout--reverse .photo-card__text-panel {
+  padding-left: 2.5rem;
+  padding-right: 1.25rem;
+}
+
+.photo-card__text {
+  margin: 0;
+  max-width: 26rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: #8b2942;
+}
+
+.photo-card__quote {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 2rem;
+  line-height: 1;
+  color: rgba(224, 83, 106, 0.45);
+}
+
+.photo-card__next {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 2;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-rose);
+  cursor: pointer;
+  padding: 0.5rem 0.25rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.photo-card__next:hover {
+  color: #8b2942;
+  transform: translateX(4px);
+}
+
+.photo-card__next:focus-visible {
+  outline: 2px solid var(--color-rose);
+  outline-offset: 4px;
+  border-radius: 4px;
+}

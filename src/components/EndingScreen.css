@@ -1,0 +1,63 @@
+.ending-screen {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  overflow: hidden;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, #2a0a18 0%, #1a0510 55%, #0d0208 100%);
+}
+
+.ending-screen__petals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ending-screen__petal {
+  position: absolute;
+  color: var(--color-rose);
+  opacity: 0.2;
+  line-height: 1;
+  animation: ending-petal-float linear infinite;
+  animation-delay: var(--petal-delay, 0s);
+  animation-duration: var(--petal-duration, 16s);
+}
+
+@keyframes ending-petal-float {
+  0% {
+    transform: translate3d(0, 105vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.35;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 0px), -10vh, 0) rotate(300deg);
+    opacity: 0;
+  }
+}
+
+.ending-screen__message {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  max-width: 22rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--color-cream);
+  letter-spacing: 0.02em;
+}
+
+.ending-screen__word {
+  display: inline-block;
+  margin-right: 0.28em;
+}

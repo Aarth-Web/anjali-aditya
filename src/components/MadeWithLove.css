@@ -1,0 +1,15 @@
+.made-with-love {
+  position: fixed;
+  right: 0.85rem;
+  bottom: 0.65rem;
+  z-index: 100;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--color-cream);
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+}
