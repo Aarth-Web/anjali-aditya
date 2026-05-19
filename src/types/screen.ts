@@ -9,6 +9,7 @@ export type Screen =
   | 'chapter3-intro'
   | 'chapter3'
   | 'question3'
+  | 'question4'
   | 'ending'
 
 export type NavigationProps = {

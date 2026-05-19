@@ -1,4 +1,5 @@
 import { PhotoCard } from '../components/PhotoCard'
+import chapter2Music from '../assets/sounds/chapter2.mp3'
 import ch2_1 from '../assets/chapter2/ch2_1.jpg'
 import ch2_2 from '../assets/chapter2/ch2_2.jpg'
 import ch2_3 from '../assets/chapter2/ch2_3.jpg'
@@ -88,6 +89,7 @@ export function Chapter2({ onComplete }: Chapter2Props) {
       type="auto"
       cards={CARDS}
       interval={2500}
+      musicSrc={chapter2Music}
       onComplete={onComplete}
     />
   )

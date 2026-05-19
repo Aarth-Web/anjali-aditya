@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import warningSound from '../assets/sounds/warning.mp3'
-import { playManagedSound, releaseSound } from '../utils/soundManager'
+import { playManagedSound, releaseSound, unlockAudio } from '../utils/soundManager'
 import './WarningScreen.css'
 
 type WarningScreenProps = {
@@ -88,8 +88,13 @@ export function WarningScreen({ onProceed }: WarningScreenProps) {
     }
   }, [])
 
+  const handleProceed = () => {
+    unlockAudio()
+    onProceed()
+  }
+
   return (
-    <div className="warning-screen">
+    <motion.div className="warning-screen" onPointerDown={unlockAudio}>
       <motion.div
         className="warning-screen__petals"
         aria-hidden
@@ -147,7 +152,7 @@ export function WarningScreen({ onProceed }: WarningScreenProps) {
         <motion.button
           type="button"
           className="warning-screen__cta"
-          onClick={onProceed}
+          onClick={handleProceed}
           initial="hidden"
           animate="show"
           custom={1.15}
@@ -158,6 +163,6 @@ export function WarningScreen({ onProceed }: WarningScreenProps) {
           Everything is perfect, less goooo 🚀
         </motion.button>
       </div>
-    </div>
+    </motion.div>
   )
 }

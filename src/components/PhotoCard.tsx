@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import chapter2Music from '../assets/sounds/chapter2.mp3'
-import { playManagedSound, releaseSound } from '../utils/soundManager'
+import { useChapterMusic } from '../hooks/useChapterMusic'
 import './PhotoCard.css'
 
 const NEXT_LABELS = [
@@ -34,6 +33,7 @@ type PhotoCardAutoProps = {
   type: 'auto'
   cards: CardData[]
   interval?: number
+  musicSrc: string
   onComplete: () => void
 }
 
@@ -131,7 +131,7 @@ function PhotoCardManual({
   )
 }
 
-function PhotoCardAuto({ cards, interval = 3000, onComplete }: PhotoCardAutoProps) {
+function PhotoCardAuto({ cards, interval = 3000, musicSrc, onComplete }: PhotoCardAutoProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const onCompleteRef = useRef(onComplete)
 
@@ -140,17 +140,7 @@ function PhotoCardAuto({ cards, interval = 3000, onComplete }: PhotoCardAutoProp
   const card = cards[currentIndex]
   const reverse = currentIndex % 2 === 1
 
-  useEffect(() => {
-    const music = playManagedSound({
-      src: [chapter2Music],
-      loop: true,
-      volume: 0.6,
-    })
-
-    return () => {
-      releaseSound(music)
-    }
-  }, [])
+  useChapterMusic(musicSrc)
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

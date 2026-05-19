@@ -11,7 +11,9 @@ import { MadeWithLove } from './components/MadeWithLove'
 import { MobileGuard } from './components/MobileGuard'
 import { QuestionCard } from './components/QuestionCard'
 import { WarningScreen } from './components/WarningScreen'
-import { stopAllSounds } from './utils/soundManager'
+import { useChapterMusic } from './hooks/useChapterMusic'
+import { getPersistedChapterMusic } from './utils/chapterMusic'
+import { stopAllSounds, unlockAudio } from './utils/soundManager'
 import type { Screen } from './types/screen'
 
 const screenTransition = {
@@ -22,9 +24,19 @@ const screenTransition = {
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('warning')
 
+  const persistedMusic = getPersistedChapterMusic(currentScreen)
+  useChapterMusic(persistedMusic)
+
   const goToScreen = useCallback((name: Screen) => {
-    stopAllSounds()
-    setCurrentScreen(name)
+    unlockAudio()
+    setCurrentScreen((prev) => {
+      const fromMusic = getPersistedChapterMusic(prev)
+      const toMusic = getPersistedChapterMusic(name)
+      if (fromMusic !== toMusic) {
+        stopAllSounds()
+      }
+      return name
+    })
   }, [])
 
   const renderScreen = () => {
@@ -112,6 +124,16 @@ function App() {
             question="Forgive me? 🥺"
             yesLabel="Love You Adi ❤️"
             noLabel="Gpp Tu."
+            onYes={() => goToScreen('question4')}
+          />
+        )
+
+      case 'question4':
+        return (
+          <QuestionCard
+            question={`Will you be my 'ति' in 'थांबा, तिला विचारून सांगतो......' ??`}
+            yesLabel="Ha, Adi 😍"
+            noLabel="Na 😏"
             onYes={() => goToScreen('ending')}
           />
         )

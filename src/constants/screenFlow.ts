@@ -11,6 +11,7 @@ export const SCREEN_FLOW: Screen[] = [
   'chapter3-intro',
   'chapter3',
   'question3',
+  'question4',
   'ending',
 ]
 

@@ -1,9 +1,9 @@
-import { Howl, type HowlOptions } from 'howler'
+import { Howl, Howler, type HowlOptions } from 'howler'
 
 const activeSounds = new Set<Howl>()
-/** Sounds waiting for the first user gesture (browsers block autoplay otherwise). */
 const pendingPlayback = new Set<Howl>()
 let unlockListenersAttached = false
+let audioUnlocked = false
 
 function track(sound: Howl, loop = false) {
   activeSounds.add(sound)
@@ -19,9 +19,22 @@ function track(sound: Howl, loop = false) {
   sound.once('stop', untrack)
 }
 
+/** Resume Web Audio and flush sounds queued by autoplay policy. Call on user gesture. */
+export function unlockAudio() {
+  audioUnlocked = true
+
+  if (Howler.ctx && Howler.ctx.state === 'suspended') {
+    void Howler.ctx.resume()
+  }
+
+  flushPending()
+}
+
 function flushPending() {
   pendingPlayback.forEach((sound) => {
-    sound.play()
+    if (sound.state() === 'loaded') {
+      sound.play()
+    }
   })
   pendingPlayback.clear()
 }
@@ -30,33 +43,56 @@ function attachUnlockListeners() {
   if (unlockListenersAttached || typeof window === 'undefined') return
   unlockListenersAttached = true
 
-  const handler = () => {
-    flushPending()
-  }
+  const handler = () => unlockAudio()
 
-  const opts = { once: false, passive: true } as AddEventListenerOptions
-  window.addEventListener('pointerdown', handler, opts)
-  window.addEventListener('keydown', handler, opts)
-  window.addEventListener('touchstart', handler, opts)
+  window.addEventListener('pointerdown', handler, { passive: true })
+  window.addEventListener('keydown', handler, { passive: true })
+  window.addEventListener('touchstart', handler, { passive: true })
 }
 
-function safePlay(sound: Howl) {
+function tryPlay(sound: Howl): boolean {
   attachUnlockListeners()
 
-  sound.once('playerror', () => {
-    pendingPlayback.add(sound)
-    sound.once('unlock', () => {
-      sound.play()
-      pendingPlayback.delete(sound)
-    })
+  const playId = sound.play()
+  if (playId !== undefined) {
+    pendingPlayback.delete(sound)
+    return true
+  }
+
+  pendingPlayback.add(sound)
+  return false
+}
+
+function playWhenReady(sound: Howl) {
+  const attempt = () => tryPlay(sound)
+
+  if (sound.state() === 'loaded') {
+    attempt()
+    return
+  }
+
+  sound.once('load', attempt)
+  sound.once('loaderror', (_id, err) => {
+    console.warn('[soundManager] load error', err, sound)
+    pendingPlayback.delete(sound)
+  })
+}
+
+function createSound(options: HowlOptions): Howl {
+  const sound = new Howl({
+    html5: true,
+    preload: true,
+    ...options,
   })
 
-  try {
-    sound.play()
-  } catch (error) {
-    console.warn('[soundManager] play() threw, queued for next gesture', error)
+  sound.on('playerror', () => {
     pendingPlayback.add(sound)
-  }
+    if (audioUnlocked) {
+      void Howler.ctx?.resume().then(() => sound.play())
+    }
+  })
+
+  return sound
 }
 
 export function stopAllSounds() {
@@ -68,30 +104,20 @@ export function stopAllSounds() {
   pendingPlayback.clear()
 }
 
-/** Stops every active sound, then starts a new managed instance. */
+/** Stops every active sound, then starts a new one (SFX / typing / warning). */
 export function playManagedSound(options: HowlOptions): Howl {
   stopAllSounds()
-  const sound = new Howl({
-    ...options,
-    onloaderror: (id, err) => {
-      console.warn('[soundManager] load error', err, options.src)
-      options.onloaderror?.(id, err)
-    },
-    onplayerror: (id, err) => {
-      console.warn('[soundManager] play error', err, options.src)
-      options.onplayerror?.(id, err)
-    },
-  })
-  track(sound, Boolean(options.loop))
-  safePlay(sound)
-  return sound
-}
 
-/** Stops other sounds, registers this one (call `.play()` yourself if needed). */
-export function registerManagedSound(options: HowlOptions): Howl {
-  stopAllSounds()
-  const sound = new Howl(options)
+  const sound = createSound({
+    onloaderror: (_id, err) => {
+      console.warn('[soundManager] load error', err, options.src)
+      options.onloaderror?.(_id, err)
+    },
+    ...options,
+  })
+
   track(sound, Boolean(options.loop))
+  playWhenReady(sound)
   return sound
 }
 
